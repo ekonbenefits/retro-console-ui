@@ -5,9 +5,9 @@ module Menu
 
 open System
 
-let colorApp = ConsoleColor.Blue
+let colorShadow = ConsoleColor.Black
 let colorsTitle = ConsoleColor.DarkRed, ConsoleColor.White
-let colorsMenu = ConsoleColor.Green, ConsoleColor.White
+let colorsMenu = ConsoleColor.DarkGreen, ConsoleColor.White
 let colorsHighlight = ConsoleColor.White, ConsoleColor.DarkRed
 let colorsSelected = ConsoleColor.White, ConsoleColor.Red
 
@@ -24,17 +24,18 @@ let show title (choices: string seq) =
                   | Some Console.Key.Tab -> circular maxChoice (!choice + 1)
                   | ______________ -> !choice
         
-        Console.setBgColor colorApp
-        Console.clear()
-        Console.setPosition(4, 5)
         Console.setColors colorsTitle
-        Console.write("            " + title + "            ")
-        choices 
-            |> Seq.iteri (fun i item -> 
-                        Console.setPosition(4, 6+i);
-                        Console.setColors (if i = !choice then colorsHighlight else colorsMenu)
-                        Console.write("            " + item + "            ")
-                        )
+        let margin = 20
+        let menuWidth = 40
+        let menuStart = 4
+        Console.say (margin, menuStart) title  menuWidth
+        choices |> Seq.iteri (fun i item -> 
+                            Console.setBgColor colorShadow
+                            Console.say (margin - 1,  menuStart + 1 + i) "" 1
+                            Console.setColors (if i = !choice then colorsHighlight else colorsMenu)
+                            Console.say (margin, menuStart + 1  + i) item menuWidth)
+        Console.setBgColor colorShadow
+        Console.say (margin - 1, menuStart + 1 + maxChoice + 1) "" menuWidth
             
         match RunLoop.lastKey() with
         | Some Console.Key.Enter -> Some(!choice)
