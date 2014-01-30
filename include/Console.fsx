@@ -11,14 +11,18 @@ type Buff = {
     mutable Fg: ConsoleColor
     mutable Bg: ConsoleColor
     }
-    
-let clearBuff () = Array2D.init Console.WindowHeight Console.WindowWidth (fun r c -> {Char = ' '; Bg = Console.BackgroundColor ; Fg = Console.ForegroundColor})
 
-let mutable private buffer : Buff [,] =  clearBuff()
+
 let mutable bufCol = 0
 let mutable bufRow = 0
 let mutable bufBg = Console.BackgroundColor
 let mutable bufFg = Console.ForegroundColor
+
+let clearBuff () = Array2D.init Console.WindowHeight Console.WindowWidth (fun r c -> {Char = ' '; Bg = bufBg ; Fg = bufFg})
+
+let mutable private buffer : Buff [,] =  clearBuff()
+
+let private output = new StreamWriter(Console.OpenStandardOutput(),Console.OutputEncoding,256, true)
 
 let hideCursor () =
     Console.CursorVisible <- false
@@ -63,15 +67,19 @@ let write (text:string) =
         if  b.Bg <> bufBg 
                 || b.Fg <> bufFg
                 || b.Char <> c then
-            Console.Write(c)
+            output.Write(c)
             buffer.[bufRow, sliceCol].Char <- c
             buffer.[bufRow, sliceCol].Bg <- bufBg
             buffer.[bufRow, sliceCol].Bg <- bufBg
         else
+            output.Flush()
             Console.CursorLeft <- sliceCol + 1
+    output.Flush()
 
 let say (col, row) (text:string) width =
     setPosition (col, row)
     let paddedText = text.PadRight(width)
     write paddedText
 
+let ready () =
+    Console.KeyAvailable

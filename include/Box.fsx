@@ -10,7 +10,7 @@ let private topBox = "╔═╗"
 let private midBox = "║ ║"
 let private botBox = "╚═╝"
 
-let private boxColors = Console.Color.DarkBlue, Console.Color.White
+let private boxColors = Console.Color.DarkMagenta, Console.Color.White
 
 type DisplayBox () =
     let mutable items: promptItem list = List.empty
