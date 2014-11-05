@@ -38,23 +38,23 @@ let setFgColor fg =
 let setColors (bg, fg) =
     setBgColor bg
     setFgColor fg
-    
+
 let resetColor () =
     Console.ResetColor()
     bufBg <- Console.BackgroundColor
     bufFg <- Console.ForegroundColor
-     
+
 let clear () =
     Console.Clear()
     buffer <- clearBuff()
-    
+
 let readKey () =
-    Console.ReadKey(false).Key    
+    Console.ReadKey(false).Key
 
 let setPosition (row, col) =
-    Console.SetCursorPosition(row,col)
-    bufCol <- row
-    bufRow <- col
+    Console.SetCursorPosition(col,row)
+    bufCol <- col
+    bufRow <- row
 
 let write (text:string) =
     let len = text.Length-1
@@ -63,8 +63,8 @@ let write (text:string) =
     for col in 0..len do
         let c = text.[col]
         let b = bufSlice.[0, col]
-        let sliceCol = bufCol + col                    
-        if  b.Bg <> bufBg 
+        let sliceCol = bufCol + col
+        if  b.Bg <> bufBg
                 || b.Fg <> bufFg
                 || b.Char <> c then
             output.Write(c)
@@ -76,8 +76,8 @@ let write (text:string) =
             Console.CursorLeft <- sliceCol + 1
     output.Flush()
 
-let say (col, row) (text:string) width =
-    setPosition (col, row)
+let say (row, col) (text:string) width =
+    setPosition (row, col)
     let paddedText = text.PadRight(width)
     write paddedText
 

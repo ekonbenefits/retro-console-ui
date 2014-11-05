@@ -23,22 +23,21 @@ let show title (choices: string seq) =
                   | Some Console.Key.DownArrow -> min maxChoice (!choice + 1)
                   | Some Console.Key.Tab -> circular maxChoice (!choice + 1)
                   | ______________ -> !choice
-        
+
         Console.setColors colorsTitle
         let margin = 20
         let menuWidth = 40
         let menuStart = 4
-        Console.say (margin, menuStart) title  menuWidth
-        choices |> Seq.iteri (fun i item -> 
+        Console.say (menuStart, margin) title  menuWidth
+        choices |> Seq.iteri (fun i item ->
                             Console.setBgColor colorShadow
-                            Console.say (margin - 1,  menuStart + 1 + i) "" 1
+                            Console.say (menuStart + 1 + i,margin - 1) "" 1
                             Console.setColors (if i = !choice then colorsHighlight else colorsMenu)
-                            Console.say (margin, menuStart + 1  + i) item menuWidth)
+                            Console.say (menuStart + 1  + i,margin) item menuWidth)
         Console.setBgColor colorShadow
-        Console.say (margin - 1, menuStart + 1 + maxChoice + 1) "" menuWidth
-            
+        Console.say (menuStart + 1 + maxChoice + 1,margin - 1) "" menuWidth
+
         match RunLoop.lastKey() with
         | Some Console.Key.Enter -> Some(!choice)
         | _____________________ -> None
     RunLoop.run draw
-
